@@ -71,24 +71,25 @@ filtered_data = data[(data['sentiment_score'] >= min_score) & (data['sentiment_s
 keywords_filtered = keywords[(keywords['sentiment_score'] >= min_score) & (keywords['sentiment_score'] <= max_score)]
 
 # Show table
-selected_data = st.data_editor(filtered_data[['is_widget',
-  													'name',
+selected_data = st.data_editor(
+            filtered_data[['is_widget',
+  							'name',
                             'rating', 
                             'sentiment_score',
                             'text', 
                             'review_link']], 
              column_config={'is_widget': 'Select',
-               							'name': 'Name', 
+               				'name': 'Name', 
                             'rating': 'Rating',
                             'sentiment_score': 'Sentiment Score',
                             'text': 'Text',
                             'review_link': st.column_config.LinkColumn('URL')
                             },
             disabled=['name',
-                    	'rating', 
-                      'text', 
-                      'sentiment_score', 
-                      'review_link'],
+                    'rating', 
+                    'text', 
+                    'sentiment_score', 
+                    'review_link'],
             use_container_width=True, hide_index=True)
     
 # Histogram
