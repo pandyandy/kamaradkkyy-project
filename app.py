@@ -44,20 +44,31 @@ if 'response' not in st.session_state:
   	st.session_state['response'] = ""
     
 # Logos
-#keboola_logo = '/data/in/files/296014_logo.png'
+keboola_logo = '/data/in/files/296014_logo.png'
 #qr_code = '/data/in/files/1112988135_qr_code.png'
-#keboola_gemini = '/data/in/files/296015_keboola_gemini.png'
+keboola_gemini = '/data/in/files/296015_keboola_gemini.png'
 
-# Load data
-data = pd.read_csv('301296.out.c_reviews.consolidated_analysis_reviews.csv')
-keywords = pd.read_csv('301293.out.c_reviews.grouped_keywords_reviews.csv')
+# Load the data
+data = pd.read_csv('/data/in/tables/consolidated_analysis_reviews.csv')
+keywords = pd.read_csv('/data/in/tables/grouped_keywords_reviews.csv')
 
 # Add widget column for st.data_editor
 data['is_widget'] = False
 
+# Sidebar
+#st.sidebar.markdown("""
+#<div style="text-align: center;">
+#    <h1>GCP Data Cloud Live</h1>
+#    <br><p>Scan the QR code to see yourself on the dashboard:</p>
+#</div>
+#""", unsafe_allow_html=True)
+#qr_html = f'<div style="display: flex; justify-content: center;"><img src="data:image/png;base64,{base64.b64encode(open(qr_code, "rb").read()).decode()}" style="width: 200px;"></div>'
+#st.sidebar.markdown(f'{qr_html}', unsafe_allow_html=True)
+#st.sidebar.markdown('<div style="text-align: center"><br><br><br>Get in touch with Keboola: <a href="https://bit.ly/cxo-summit-2024">https://bit.ly/cxo-summit-2024</a>#replace</div>', unsafe_allow_html=True)
+
 # Title and Filters
-#keboola_logo_html = f'<div style="display: flex; justify-content: flex-end;"><img src="data:image/png;base64,{base64.b64encode(open(keboola_logo, "rb").read()).decode()}" style="width: 150px; margin-left: -10px;"></div>'
-#st.markdown(f'{keboola_logo_html}', unsafe_allow_html=True)
+keboola_logo_html = f'<div style="display: flex; justify-content: flex-end;"><img src="data:image/png;base64,{base64.b64encode(open(keboola_logo, "rb").read()).decode()}" style="width: 150px; margin-left: -10px;"></div>'
+st.markdown(f'{keboola_logo_html}', unsafe_allow_html=True)
 
 st.title('Review Explorer')
 
@@ -71,25 +82,24 @@ filtered_data = data[(data['sentiment_score'] >= min_score) & (data['sentiment_s
 keywords_filtered = keywords[(keywords['sentiment_score'] >= min_score) & (keywords['sentiment_score'] <= max_score)]
 
 # Show table
-selected_data = st.data_editor(
-            filtered_data[['is_widget',
-  							'name',
+selected_data = st.data_editor(filtered_data[['is_widget',
+  													'name',
                             'rating', 
                             'sentiment_score',
                             'text', 
                             'review_link']], 
              column_config={'is_widget': 'Select',
-               				'name': 'Name', 
+               							'name': 'Name', 
                             'rating': 'Rating',
                             'sentiment_score': 'Sentiment Score',
                             'text': 'Text',
                             'review_link': st.column_config.LinkColumn('URL')
                             },
             disabled=['name',
-                    'rating', 
-                    'text', 
-                    'sentiment_score', 
-                    'review_link'],
+                    	'rating', 
+                      'text', 
+                      'sentiment_score', 
+                      'review_link'],
             use_container_width=True, hide_index=True)
     
 # Histogram
@@ -118,8 +128,8 @@ plt.axis('off')
 st.pyplot(plt)
     
 # Gemini response
-#gemini_html = f'<div style="display: flex; justify-content: flex-end;"><img src="data:image/png;base64,{base64.b64encode(open(keboola_gemini, "rb").read()).decode()}" style="width: 60px; margin-top: 30px;"></div>'
-#st.markdown(f'{gemini_html}', unsafe_allow_html=True)
+gemini_html = f'<div style="display: flex; justify-content: flex-end;"><img src="data:image/png;base64,{base64.b64encode(open(keboola_gemini, "rb").read()).decode()}" style="width: 60px; margin-top: 30px;"></div>'
+st.markdown(f'{gemini_html}', unsafe_allow_html=True)
 
 st.markdown("""
 <div style="text-align: left;">
@@ -149,7 +159,7 @@ if selected_data['is_widget'].sum() == 1:
         st.write(f"_Response:_\n\n{st.session_state[review_key]}")
 
         # Save to Keboola
-        if st.button('Save to Keboola'):
+        if st.button('Upload to Keboola'):
             with st.spinner("📤 Uploading data, please wait..."):
                 identifier = review_key
 
@@ -157,10 +167,10 @@ if selected_data['is_widget'].sum() == 1:
                 matching_row.loc[:, 'gemini_response'] = st.session_state.get(review_key, '')
                 matching_row = matching_row.drop(columns=['is_widget'])
 
-                matching_row.to_csv('./review_responses.csv.gz', index=False, compression='gzip')
+                matching_row.to_csv('review_responses.csv', index=False)
                 try:
-                    client.tables.load(table_id='out.c-reviews.review_responses', file_path='./review_responses.csv.gz', is_incremental=False)
-                    st.success(':)')
+                    client.tables.load(table_id='out.c-reviews.review_responses', file_path='review_responses.csv', is_incremental=False)
+                    st.success('Uploaded.')
                 except Exception as e:
                     st.error(f"Data upload failed with: {str(e)}")
 else:
