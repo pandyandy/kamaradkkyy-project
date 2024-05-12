@@ -7,3 +7,4 @@ pyjwt
 google-auth
 google-cloud-aiplatform
 vertexai
+git+https://github.com/keboola/sapi-python-client@feature-gcp-files
