@@ -5,6 +5,6 @@ pandas
 wordcloud
 pyjwt
 google-auth
-google-cloud-aiplatform
+google-cloud-aiplatform>=1.38
 vertexai
 git+https://github.com/keboola/sapi-python-client@feature-gcp-files
