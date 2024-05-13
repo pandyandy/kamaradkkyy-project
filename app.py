@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import base64
 import jwt
+import vertexai
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import plotly.express as px
