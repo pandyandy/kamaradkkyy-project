@@ -97,7 +97,12 @@ plt.figure(figsize=(10, 5), frameon=False)
 plt.imshow(wordcloud_array, interpolation='bilinear')
 plt.axis('off')
 st.pyplot(plt)
-    
+
+# Gemini response
+keboola_openai = '/data/in/files/526193_keboola_openai.png'
+openai_html = f'<div style="display: flex; justify-content: flex-end;"><img src="data:image/png;base64,{base64.b64encode(open(keboola_openai, "rb").read()).decode()}" style="width: 60px; margin-top: 30px;"></div>'
+st.markdown(f'{openai_html}', unsafe_allow_html=True)
+
 st.markdown("""
 <div style="text-align: left;">
     <h4>Reply to a review with AI</h4>
