@@ -4,4 +4,4 @@ plotly
 pandas
 wordcloud
 openai
-git+https://github.com/keboola/sapi-python-client@feature-gcp-files
+git+https://github.com/keboola/sapi-python-client.git
